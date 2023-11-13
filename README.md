@@ -1,4 +1,4 @@
-[![Go Report Card](https://goreportcard.com/badge/github.com/jchv/playerctl-inhibit)](https://goreportcard.com/report/github.com/jchv/playerctl-inhibit) [![CI](https://github.com/jchv/playerctl-inhibit/actions/workflows/ci.yml/badge.svg)](https://github.com/jchv/playerctl-inhibit/actions/workflows/ci.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/jchv/playerctl-inhibit)](https://goreportcard.com/report/github.com/jchv/playerctl-inhibit) [![CI](https://github.com/jchv/playerctl-inhibit/actions/workflows/ci.yaml/badge.svg)](https://github.com/jchv/playerctl-inhibit/actions/workflows/ci.yaml)
 
 # playerctl-inhibit
 This is a small Go daemon that connects to playerctld over dbus (via MPRIS, using [go-mpris](https://github.com/leberKleber/go-mpris)) and signals logind to inhibit suspend when media is playing.
