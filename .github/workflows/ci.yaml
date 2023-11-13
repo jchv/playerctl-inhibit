@@ -1,0 +1,21 @@
+name: CI
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+jobs:
+  CI:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Nix
+        uses: cachix/install-nix-action@v23
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run Tests
+        run: nix develop --command go test -mod=readonly ./...
+      - name: Build
+        run: nix build
+      - name: Flake Check
+        run: nix flake check --all-systems
