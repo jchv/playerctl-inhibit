@@ -53,7 +53,9 @@ func main() {
 	releaseInhibit := func() {
 		if inhibitFile != nil {
 			log.Printf("releasing inhibit lock")
-			inhibitFile.Close()
+			if err := inhibitFile.Close(); err != nil {
+				log.Printf("error releasing inhibit lock: %v", err)
+			}
 			inhibitFile = nil
 		}
 	}
@@ -117,14 +119,20 @@ func runMprisChannel(ctx context.Context, opts mprisOptions) chan bool {
 			for ctx.Err() == nil {
 				status, err := player.PlaybackStatus()
 				if err != nil {
-					if derr := errors.Unwrap(&dbus.Error{}); derr != nil {
-						if derr.(*dbus.Error).Name == "com.github.altdesktop.playerctld.NoActivePlayer" {
+					derr := dbus.Error{}
+					if errors.As(err, &derr) {
+						if derr.Name == "com.github.altdesktop.playerctld.NoActivePlayer" {
 							status = mpris.PlaybackStatusStopped
 							goto noPlayer
 						}
 					}
 					log.Printf("error getting player status: %v", err)
-					break playerctldLoop
+					select {
+					case <-time.After(5 * time.Second):
+						break playerctldLoop
+					case <-ctx.Done():
+						return
+					}
 				}
 			noPlayer:
 				updateStatus(status)
